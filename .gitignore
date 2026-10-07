@@ -22,5 +22,8 @@ pnpm-debug.log*
 # System files
 .DS_Store
 Thumbs.db
-
 *.tsbuildinfo
+
+# Operational scripts & Database SQL (Private — Not exposed to GitHub)
+scripts/
+supabase/
