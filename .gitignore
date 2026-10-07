@@ -27,3 +27,9 @@ Thumbs.db
 # Operational scripts & Database SQL (Private — Not exposed to GitHub)
 scripts/
 supabase/
+
+# Media assets (NEVER committed to git)
+*.jpg
+*.jpeg
+*.webp
+*.avif

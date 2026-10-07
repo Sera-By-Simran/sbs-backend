@@ -126,14 +126,12 @@ export async function processAndStoreMedia(input: ProcessMediaInput): Promise<Pr
 
   await Promise.all(derivativePromises);
 
-  // Public URL for main derivative
-  const { data: publicUrlData } = supabase.storage
-    .from('media-public')
-    .getPublicUrl(`derivatives/${assetId}/${Math.min(640, width)}w.webp`);
+  // Proxied URL for main derivative (protects raw Supabase bucket URL from client leak)
+  const proxyUrl = `/api/media/derivatives/${assetId}/${Math.min(640, width)}w.webp`;
 
   return {
     assetId,
-    url: publicUrlData.publicUrl,
+    url: proxyUrl,
     blurDataUrl,
     width,
     height,
