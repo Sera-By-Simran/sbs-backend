@@ -23,6 +23,14 @@ const EnquirySubmissionSchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
+  // Enforce server-to-server gateway key (BFF validation)
+  const internalKey = req.headers.get('x-internal-key');
+  const expectedKey = process.env.INTERNAL_API_KEY;
+
+  if (expectedKey && internalKey !== expectedKey) {
+    return apiError('FORBIDDEN', 'Direct public submission blocked. Route via boutique gateway.', undefined, 403);
+  }
+
   try {
     const body = await req.json();
     const parsed = EnquirySubmissionSchema.safeParse(body);
