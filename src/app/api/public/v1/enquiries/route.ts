@@ -37,6 +37,9 @@ export async function POST(req: NextRequest) {
 
     const data = parsed.data;
     const supabase = getAdminSupabase();
+    if (!supabase) {
+      return apiError('CONFIG_ERROR', 'Database client unavailable', undefined, 500);
+    }
 
     // 1. Find or create customer by phone
     let customerId: string | null = null;
@@ -107,7 +110,7 @@ export async function POST(req: NextRequest) {
       .select('id, name, sku, price_paise')
       .in('id', productIds);
 
-    const productMap = new Map((products || []).map((p: any) => [p.id, p]));
+    const productMap = new Map<string, any>((products || []).map((p: any) => [p.id, p]));
 
     const itemsToInsert = data.items.map((item) => {
       const product = productMap.get(item.product_id);
@@ -138,7 +141,7 @@ export async function POST(req: NextRequest) {
       customer_name: data.full_name,
       preferred_channel: data.preferred_channel,
       message: 'Your bespoke enquiry has been submitted. A SÉRA private concierge will reach out to you shortly.',
-    }, 201);
+    }, undefined, 201);
   } catch (err: any) {
     return apiError('INTERNAL_ERROR', err?.message || 'Failed to submit enquiry', undefined, 500);
   }
