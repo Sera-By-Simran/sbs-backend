@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { getAdminSupabase } from '@/lib/supabase/admin';
 import { apiError, apiSuccess } from '@/lib/response/envelope';
+import { sendEnquiryNotification } from '@/lib/email/notifier';
 import { z } from 'zod';
 
 const EnquiryItemSchema = z.object({
@@ -134,6 +135,16 @@ export async function POST(req: NextRequest) {
         console.error('Failed to snapshot enquiry items:', itemsErr);
       }
     }
+
+    // Trigger transactional notification asynchronously
+    sendEnquiryNotification({
+      reference: enquiry.reference,
+      customerName: data.full_name,
+      customerPhone: cleanPhone,
+      customerEmail: data.email || undefined,
+      preferredChannel: data.preferred_channel,
+      itemsCount: itemsToInsert.length,
+    }).catch((err) => console.error('Enquiry notification send error:', err));
 
     return apiSuccess({
       enquiry_id: enquiry.id,
