@@ -1,10 +1,11 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-let adminClient: ReturnType<typeof createClient> | null = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let adminClient: SupabaseClient<any, 'public', any> | null = null;
 
 /**
  * Returns the Supabase service-role client.
- * NOTE: This is exclusive to backend/src/server code and MUST NEVER be leaked.
+ * NOTE: This is exclusive to backend server code and MUST NEVER be leaked.
  */
 export function getSupabaseAdmin() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -15,7 +16,8 @@ export function getSupabaseAdmin() {
   }
 
   if (!adminClient) {
-    adminClient = createClient(url, key, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    adminClient = createClient<any>(url, key, {
       auth: {
         autoRefreshToken: false,
         persistSession: false,
