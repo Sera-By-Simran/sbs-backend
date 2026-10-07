@@ -1,0 +1,2 @@
+-- SÉRA BY SIMRAN — Structural Database Seed
+-- Run via pnpm db:seed or supabase db reset
